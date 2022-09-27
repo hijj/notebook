@@ -33,9 +33,12 @@
 31. [~~constant_time openssl这一套接口干什么的~~](#check31)
 32. [~~BN_CTX用途~~](#check32)
 33. TLS各版本RFC阅读
-34. 研究TCP，从原理到源码
+34. <font face=黑体 color=red size=4>研究TCP，从原理到源码</font>
 35. 反向代理和反向链接原理
 36. B树、B+树、红黑树、LSM树
+37. fips模式向windows CA服务器申请证书解析失败定位
+38. <font face="黑体" color=red size=4>openssl状态机完整分析</font>
+39. <font face="黑体" color=red size=4>TLS1.0/TLS1.1/TLS1.2/TLS1.3差别分析</font>
 
 
 
