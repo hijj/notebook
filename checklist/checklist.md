@@ -1,12 +1,12 @@
 
 ## checklist
-1. [review liuhui项目代码](#check1)
+1. [~~review liuhui项目代码~~](#check1)
 2. P2P实现原理
 3. openssl适配dpdk代码学习，dpdk下openssl目录
 4. man gcc学习
 5. ECDH keygen验证方法，椭圆曲线的理解
 6. 什么是SUITE B
-7. 利用思维导图，让设计和checklist更加清晰
+7. **利用思维导图，让设计和checklist更加清晰**
 8. openssl UI组件是干什么的
 9. 问题单助手使用
 10. shell使用广度优先算法实现lib依赖
@@ -39,7 +39,10 @@
 37. fips模式向windows CA服务器申请证书解析失败定位
 38. <font face="黑体" color=red size=4>openssl状态机完整分析</font>
 39. <font face="黑体" color=red size=4>TLS1.0/TLS1.1/TLS1.2/TLS1.3差别分析</font>
-
+40. ipsec/ike流程学习，重点关注转发相关，加解密相关
+41. **学习开源较难理解代码，考虑先从开源历史提交记录分析，以openssl ui为例**
+42. openssl c_rehash.in 工具什么作用
+43. openssl asm怎么实现的，原理
 
 
 
