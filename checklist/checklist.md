@@ -43,6 +43,8 @@
 41. **学习开源较难理解代码，考虑先从开源历史提交记录分析，以openssl ui为例**
 42. openssl c_rehash.in 工具什么作用
 43. openssl asm怎么实现的，原理
+44. [RFC学习](#check44)
+45. <font face="黑体" color=red size=4>TLS1.0/TLS1.1/TLS1.2/TLS1.3和cbc/gcm详细跟踪流程</font>
 
 
 
@@ -156,7 +158,58 @@ BIO可以连接，bio1->next = bio2, bio2->next=bio3，数据会先从bio1经过
    * 当前程序和其子程序间共用分配的内存，不用释放再重新申请
    * 获取BIGNUM时，不需要分配关注每个BIGNUM的释放
 
+##### <a id="check44">RFC学习</a>
+* ~~RFC2246 The TLS Protocol Version 1.0~~
+* RFC5280 Internet X.509 Public Key Infrastructure Certificate and CRL Profile
+* RFC PKCS相关 RFC2313[PKCS1A] RFC3447[PKCS1B]
+* DH原理
+* RFC4347 Datagram Transport Layer Security
+* The Directory - Authentication Framework
+* ~~RFC2631 Diffie-Hellman Key Agreement Method ~~
+* RFC2630 Cryptographic Message Syntax
+* explicit IV CBC实现不同，openssl和PolarSSL(现为Mbedtls)
+```
+openssl：
+CBC加密流程：
+random: 1001 加密IV: 0001 key:0101
+明文: (1001) 1110 1010 1011
+1001 xor 0001(IV) xor 0101(key) = 1101
+1110 xor 1101(IV) xor 0101(key) = 0110
+1010 xor 0110(IV) xor 0101(key) = 1001
+1011 xor 1001(IV) xor 0101(key) = 0111
+密文：1101 0110 1001 0111
 
+CBC解密流程：
+1101 xor 0101(key) xor 0001(IV) = 1001 ==>丢弃
+0110 xor 0101(key) xor 1101(IV) = 1110
+1001 xor 0101(key) xor 0110(IV) = 1010
+0111 xor 0101(key) xor 1001(IV) = 1011
+
+
+MbedTLS：
+CBC加密流程：
+加密IV：1101
+明文：1110 1010 1011
+1110 xor 1101(IV) xor 0101(key) = 0110
+1010 xor 0110(IV) xor 0101(key) = 1001
+1011 xor 1001(IV) xor 0101(key) = 0111
+
+
+CBC解密流程：
+解密IV: 1101
+密文：0110 1001 0111
+0110 xor 0101(key) xor 1101(IV) = 1110
+1011 xor 0101(key) xor 0110(IV) = 1010
+0111 xor 0101(key) xor 1001(IV) = 1011
+
+
+
+```
+* 学习https://byronhe.com/post/2015/09/06/tls-protocol-analysis-and-crypto-protocol-design/
+```
+https://www.rfc-editor.org/search/rfc_search_detail.php
+查找rfc, Obsoletes xx表示替代xx, Obsoleted by yy表示被yy替代
+```
 
 
 
