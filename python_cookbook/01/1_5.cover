@@ -1,0 +1,29 @@
+       #!/usr/bin/python3
+       
+    1: import heapq
+       
+    2: class ProrityQueue:
+    1:     def __init__(self):
+    1:         self._queue = []
+    1:         self._index = 0
+    1:     def push(self, item, priority):
+    4:         heapq.heappush(self._queue, (-priority, self._index, item))
+    4:         self._index += 1
+    1:     def pop(self):
+    4:         return heapq.heappop(self._queue)[-1]
+       
+    2: class Item:
+    1:     def __init__(self, name):
+    4:         self.name = name
+    1:     def __repr__(self):
+    4:         return 'Item({!r})'.format(self.name)
+       
+    1: q = ProrityQueue()
+    1: q.push(Item('foo'), 1)
+    1: q.push(Item('bar'), 5)
+    1: q.push(Item('spam'), 4)
+    1: q.push(Item('grok'), 1)
+    1: print(q.pop())
+    1: print(q.pop())
+    1: print(q.pop())
+    1: print(q.pop())

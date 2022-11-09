@@ -45,7 +45,10 @@
 43. openssl asm怎么实现的，原理
 44. [RFC学习](#check44)
 45. <font face="黑体" color=red size=4>TLS1.0/TLS1.1/TLS1.2/TLS1.3和cbc/gcm详细跟踪流程</font>
-
+46. ~~glibc指针加密~~
+47. markdown数学公式
+48. 编译共享库时.pc文件是什么,参考openssl
+49. docker原理及入门
 
 
 ## detail
@@ -58,6 +61,40 @@ lizhiming代码路径：http://10.153.120.80/cmwcode-open/V7R1_SPRINGB75/trunk/V
 + 规则：定制本次功能产品不允许下slot不带subslot
 + 因为两个命令行必须同时存在的， master和slave不能同时相同 
 + 守护进程中是转序的，插件没转序，是否存在问题
+
+#### <a id="check12">TLS1.3 HKDF是什么</a>
+```
+HKDF == HMAC-based Key Derivation Function    
+HMAC(K, data1 | data2 | data3)    
+step1: Extract
+	HKDF-Extract(salt, IKM) --> PRK
+	输入：
+	salt:可选，如果未指定，使用hashlen个0代替
+	IKM:输入的keying material
+	输出：
+	PRK: a pseudorandom key(HashLen字节大小)
+step2: Expand
+	HKDF_Expand(PRK, info, L) --> OKM
+	输入：
+	PRK:至少hashlen长度的pseudorandom key，通常有step1导出
+	info: 可选，可以为"" 
+	L:期望输出的字节数（长度<=255*hashlen）
+	输出：
+	OKM:输出的keying material(L字节)
+OKM计算：
+	N = ceil(L/hashLen)
+	T = T(1) | T(2) | T(3) ... | T(N)
+	OKM = first L octers of T
+	T(0) = empty string(zero length)
+	T(1) = HMAC_Hash(PRK, T(1) | info | 0x01)
+	...
+	T(N) = HMAC_Hash(PRK, T(N-1) | info | N-1)
+info:
+	info可选，但是对于应用程序，可以和程序进行上下文绑定，如可以是协议号、算法标识、用户标识等。必须和IKM不相关
+相关资料：
+	https://blog.csdn.net/mrpre/article/details/80056618
+```
+
 
 ##### <a id="check18">rsa blinding实现原理，解决问题</a>
 rsa blinding实现原理，解决问题     
@@ -168,6 +205,8 @@ BIO可以连接，bio1->next = bio2, bio2->next=bio3，数据会先从bio1经过
 * ~~RFC2631 Diffie-Hellman Key Agreement Method ~~
 * RFC2630 Cryptographic Message Syntax
 * explicit IV CBC实现不同，openssl和PolarSSL(现为Mbedtls)
+* <font face="黑体" color=red size=4>算法的学习，应先找实现步骤了解机制，再从整体学习</font>
+* 各算法实现步骤：CMAC, GCM, RSA各填充等
 ```
 openssl：
 CBC加密流程：
@@ -210,6 +249,53 @@ CBC解密流程：
 https://www.rfc-editor.org/search/rfc_search_detail.php
 查找rfc, Obsoletes xx表示替代xx, Obsoleted by yy表示被yy替代
 ```
+* CRYPTO101学习
+* TLS1.3 PSK
+* 分组加密的padding
+```
+PKCS5:
+0102 ==> 0102060606060606
+0102030405060708 ==> 01020304050607080808080808080808
+
+PKCS7:
+1. OneAndZeroes Padding, 添加0x80 0x00
+0102 ==> 0102080000000000
+01020304050607 ==> 0102030405060780
+0102030405060708 ==> 01020304050607088000000000000000
+
+2. ASNI X9.23 padding(Pad with zeroes except make the last bytes equal to the number of padding bytes)
+0102 ==> 0102000000000006
+01020304050607 ==> 0102030405060701
+0102030405060708 ==> 01020304050607080000000000000008
+
+3. w3c padding
+0102 ==> 0102xyxyxyxyxy06
+01020304050607 ==> 0102030405060701
+0102030405060708 ==> 0102030405060708xyxyxyxyxyxyxy08
+
+4. Pad with zero(null) characeters(零填充)
+01020304050607 ==> 0102030405060700
+0102030405060708 ==> 0102030405060708
+
+5. pad with spaces(0x20空格填充)
+01020304050607 ==> 0102030405060720
+0102030405060708 ==> 0102030405060708
+
+```
+* RFC3610 CCM
+* GCM实现，以及GCTR和CTR的差别
 
 
+##### <a id="check46">RFC学习</a>
+```
+C实现协程jmp_buf中有应用：
+大意就是：使用每线程变量对指针进行进行转换，使其看起来不像是指针，比如64位X86指针格式明显，地址总线应该是46位，应该是这种0x7fff----
 
+https://sourceware.org/glibc/wiki/PointerEncryption
+```
+
+
+##### <a id="check47">markdown数学公式</a>
+```
+https://www.jianshu.com/p/e74eb43960a1
+```
